@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LUXE — Premium E-Commerce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A86C;
+  --gold-light:#E8D5A3;
+  --gold-dark:#8B6914;
+  --ink:#0D0D0D;
+  --ink-light:#2A2A2A;
+  --smoke:#F7F4EF;
+  --white:#FFFFFF;
+  --muted:#8A8480;
+  --border:#E2DDD6;
+  --red:#C0392B;
+  --green:#1A6B3C;
+  --shadow:0 2px 20px rgba(13,13,13,0.08);
+  --shadow-lg:0 8px 40px rgba(13,13,13,0.14);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--smoke);color:var(--ink);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',Georgia,serif}
+button{cursor:pointer;font-family:'DM Sans',sans-serif}
+input,select{font-family:'DM Sans',sans-serif}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--smoke)}
+::-webkit-scrollbar-thumb{background:var(--gold)}
+
+/* LAYOUT */
+.app{display:flex;flex-direction:column;min-height:100vh}
+.container{max-width:1280px;margin:0 auto;padding:0 2rem}
+.page{flex:1;padding-top:80px}
+
+/* TOAST */
+#toast-container{position:fixed;top:90px;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
+.toast{background:var(--ink);color:var(--white);padding:.7rem 1.2rem;border-radius:4px;font-size:.8rem;font-weight:500;letter-spacing:.03em;opacity:0;transform:translateX(20px);transition:all .35s ease;pointer-events:none;border-left:3px solid var(--gold)}
+.toast.show{opacity:1;transform:translateX(0)}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(247,244,239,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:80px;padding:0 2rem;max-width:1280px;margin:0 auto}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;letter-spacing:.15em;color:var(--ink)}
+.logo span{color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:2rem}
+.nav-link{font-size:.8rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);transition:color .2s;position:relative;padding:.3rem 0;cursor:pointer}
+.nav-link::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--gold);transition:width .2s}
+.nav-link:hover,.nav-link.active{color:var(--ink)}
+.nav-link:hover::after,.nav-link.active::after{width:100%}
+.nav-actions{display:flex;align-items:center;gap:1rem}
+.icon-btn{background:none;border:none;padding:.5rem;display:flex;align-items:center;justify-content:center;color:var(--ink);transition:color .2s;position:relative}
+.icon-btn:hover{color:var(--gold)}
+.cart-badge{position:absolute;top:2px;right:2px;background:var(--gold);color:var(--white);font-size:.6rem;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1}
+.user-btn{background:var(--ink);color:var(--white);border:none;padding:.5rem 1.2rem;font-size:.75rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;border-radius:2px;transition:background .2s}
+.user-btn:hover{background:var(--gold-dark)}
+
+/* HERO */
+.hero{height:calc(100vh - 80px);display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden}
+.hero-left{display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem 4rem 2rem;position:relative;z-index:1}
+.hero-eyebrow{font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;font-weight:500}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,5vw,5.5rem);line-height:1.05;font-weight:300;color:var(--ink);margin-bottom:1.5rem}
+.hero-title em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:.9rem;color:var(--muted);line-height:1.8;max-width:380px;margin-bottom:2.5rem;font-weight:300}
+.hero-actions{display:flex;gap:1rem;align-items:center}
+.btn-primary{background:var(--ink);color:var(--white);border:1px solid var(--ink);padding:.9rem 2.2rem;font-size:.75rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;border-radius:2px;transition:all .25s;cursor:pointer}
+.btn-primary:hover{background:var(--gold);border-color:var(--gold)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--border);padding:.9rem 2.2rem;font-size:.75rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;border-radius:2px;transition:all .25s;cursor:pointer}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.hero-right{background:linear-gradient(135deg,#E8DDD0 0%,#D4C4A8 50%,#C8B898 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.hero-img-wrapper{position:relative;width:380px;height:480px}
+.hero-img-bg{position:absolute;inset:0;background:linear-gradient(180deg,rgba(201,168,108,.15) 0%,rgba(201,168,108,.3) 100%);border-radius:4px}
+.hero-product-display{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:8rem}
+.hero-tag{position:absolute;bottom:2rem;right:-1rem;background:var(--white);padding:1rem 1.5rem;box-shadow:var(--shadow-lg);border-radius:2px}
+.hero-tag-label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.hero-tag-price{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--ink);font-weight:600}
+
+/* MARQUEE */
+.marquee-bar{background:var(--ink);color:var(--gold-light);padding:.6rem 0;overflow:hidden}
+.marquee-track{display:flex;gap:3rem;animation:marquee 20s linear infinite;white-space:nowrap}
+.marquee-item{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:400;display:flex;align-items:center;gap:.8rem}
+.marquee-item::before{content:'◆';font-size:.4rem}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* SECTION */
+.section{padding:5rem 0}
+.section-header{text-align:center;margin-bottom:3.5rem}
+.section-eyebrow{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem;font-weight:500}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,4vw,3.2rem);font-weight:300;color:var(--ink)}
+.section-sub{font-size:.9rem;color:var(--muted);margin-top:.8rem;font-weight:300}
+
+/* FILTERS */
+.filters-bar{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:2.5rem;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.filter-group{display:flex;align-items:center;gap:.5rem}
+.filter-label{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.filter-btn{background:none;border:1px solid var(--border);padding:.4rem .9rem;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-radius:2px;transition:all .2s;font-weight:400}
+.filter-btn:hover{border-color:var(--gold);color:var(--gold)}
+.filter-btn.active{background:var(--ink);border-color:var(--ink);color:var(--white)}
+.search-bar{margin-left:auto;display:flex;align-items:center;gap:.5rem;border:1px solid var(--border);border-radius:2px;padding:.4rem .8rem;background:var(--white)}
+.search-bar input{border:none;outline:none;background:none;font-size:.8rem;color:var(--ink);width:160px}
+.search-bar svg{color:var(--muted);flex-shrink:0}
+.sort-select{border:1px solid var(--border);border-radius:2px;padding:.4rem .8rem;font-size:.72rem;letter-spacing:.05em;color:var(--muted);background:var(--white);outline:none;cursor:pointer}
+
+/* PRODUCT GRID */
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:2rem}
+.product-card{background:var(--white);border:1px solid var(--border);border-radius:2px;overflow:hidden;cursor:pointer;transition:transform .3s,box-shadow .3s;position:relative}
+.product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.product-img{height:280px;display:flex;align-items:center;justify-content:center;font-size:5rem;background:linear-gradient(135deg,var(--smoke) 0%,#EDE9E0 100%);position:relative;overflow:hidden}
+.product-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(0,0,0,.04))}
+.product-badge{position:absolute;top:.8rem;left:.8rem;background:var(--ink);color:var(--white);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;padding:.3rem .7rem;border-radius:1px;font-weight:500}
+.product-badge.sale{background:var(--red)}
+.product-badge.new{background:var(--gold)}
+.wishlist-btn{position:absolute;top:.8rem;right:.8rem;background:var(--white);border:none;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s,color .2s;color:var(--muted);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.wishlist-btn.active,.product-card:hover .wishlist-btn{opacity:1}
+.wishlist-btn.active{color:var(--red)}
+.product-info{padding:1.2rem}
+.product-brand{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.product-name{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:400;margin:.3rem 0 .5rem;line-height:1.3}
+.product-desc{font-size:.78rem;color:var(--muted);line-height:1.6;font-weight:300;margin-bottom:.8rem}
+.product-footer{display:flex;align-items:center;justify-content:space-between}
+.product-price{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--ink)}
+.product-price-old{font-size:.85rem;color:var(--muted);text-decoration:line-through;margin-left:.4rem;font-family:'DM Sans',sans-serif;font-weight:300}
+.product-rating{display:flex;align-items:center;gap:.3rem;font-size:.72rem;color:var(--muted)}
+.stars{color:var(--gold);font-size:.7rem;letter-spacing:.05em}
+.add-to-cart-btn{background:var(--ink);color:var(--white);border:none;padding:.55rem 1rem;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;border-radius:1px;transition:background .2s;font-weight:500;white-space:nowrap}
+.add-to-cart-btn:hover{background:var(--gold)}
+
+/* PRODUCT MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,13,13,.55);z-index:2000;display:flex;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--white);border-radius:4px;max-width:860px;width:100%;max-height:90vh;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;position:relative;transform:translateY(20px);transition:transform .3s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-img{background:linear-gradient(135deg,var(--smoke) 0%,#EDE9E0 100%);display:flex;align-items:center;justify-content:center;font-size:9rem;min-height:400px;position:sticky;top:0}
+.modal-body{padding:2.5rem}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted);z-index:1;transition:color .2s;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.9)}
+.modal-close:hover{color:var(--ink)}
+.modal-brand{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.modal-name{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;margin:.4rem 0 1rem;line-height:1.2}
+.modal-price-row{display:flex;align-items:baseline;gap:.8rem;margin-bottom:1.2rem}
+.modal-price{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600}
+.modal-desc{font-size:.85rem;color:var(--muted);line-height:1.8;font-weight:300;margin-bottom:1.5rem}
+.modal-section{margin-bottom:1.2rem}
+.modal-section-label{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink);font-weight:500;margin-bottom:.6rem}
+.size-options,.color-options{display:flex;gap:.5rem;flex-wrap:wrap}
+.size-btn{border:1px solid var(--border);background:none;padding:.45rem .8rem;font-size:.78rem;cursor:pointer;border-radius:1px;transition:all .2s;min-width:40px;text-align:center}
+.size-btn:hover,.size-btn.active{border-color:var(--ink);background:var(--ink);color:var(--white)}
+.color-btn{width:28px;height:28px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:border-color .2s;position:relative}
+.color-btn.active{border-color:var(--ink)}
+.qty-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem}
+.qty-control{display:flex;align-items:center;border:1px solid var(--border);border-radius:2px}
+.qty-btn{background:none;border:none;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;color:var(--muted);transition:color .2s}
+.qty-btn:hover{color:var(--ink)}
+.qty-num{width:40px;text-align:center;font-size:.9rem;font-weight:500}
+.modal-add-btn{width:100%;background:var(--ink);color:var(--white);border:none;padding:1rem;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500;border-radius:2px;transition:background .2s;cursor:pointer}
+.modal-add-btn:hover{background:var(--gold)}
+
+/* CART DRAWER */
+.cart-drawer{position:fixed;right:0;top:0;bottom:0;width:420px;background:var(--white);z-index:3000;transform:translateX(100%);transition:transform .35s ease;box-shadow:-4px 0 40px rgba(0,0,0,.15);display:flex;flex-direction:column}
+.cart-drawer.open{transform:translateX(0)}
+.cart-overlay{position:fixed;inset:0;background:rgba(13,13,13,.4);z-index:2999;opacity:0;pointer-events:none;transition:opacity .3s}
+.cart-overlay.open{opacity:1;pointer-events:all}
+.cart-header{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400}
+.cart-count{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+.cart-items{flex:1;overflow-y:auto;padding:1.5rem}
+.cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;gap:1rem;text-align:center}
+.cart-empty-icon{font-size:3rem;opacity:.3}
+.cart-empty p{font-size:.85rem;color:var(--muted);font-weight:300}
+.cart-item{display:grid;grid-template-columns:80px 1fr auto;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--border);align-items:start}
+.cart-item-img{background:var(--smoke);border-radius:2px;height:80px;display:flex;align-items:center;justify-content:center;font-size:2rem;border:1px solid var(--border)}
+.cart-item-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;margin-bottom:.2rem}
+.cart-item-meta{font-size:.72rem;color:var(--muted);margin-bottom:.5rem}
+.cart-item-qty{display:flex;align-items:center;gap:.5rem}
+.cart-qty-btn{background:none;border:1px solid var(--border);width:24px;height:24px;border-radius:1px;display:flex;align-items:center;justify-content:center;font-size:.9rem;cursor:pointer;transition:border-color .2s;color:var(--muted)}
+.cart-qty-btn:hover{border-color:var(--ink);color:var(--ink)}
+.cart-qty-num{font-size:.8rem;font-weight:500;min-width:20px;text-align:center}
+.cart-item-price{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;white-space:nowrap}
+.cart-remove{background:none;border:none;color:var(--muted);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:color .2s;margin-top:.3rem;display:block}
+.cart-remove:hover{color:var(--red)}
+.cart-footer{padding:1.5rem;border-top:1px solid var(--border);background:var(--smoke)}
+.cart-totals{margin-bottom:1.2rem}
+.cart-total-row{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.5rem;color:var(--muted)}
+.cart-total-row.grand{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--ink);font-weight:600;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border)}
+.checkout-btn{width:100%;background:var(--ink);color:var(--white);border:none;padding:1rem;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500;border-radius:2px;transition:background .2s;cursor:pointer}
+.checkout-btn:hover{background:var(--gold)}
+
+/* AUTH MODAL */
+.auth-modal{background:var(--white);border-radius:4px;max-width:440px;width:100%;padding:3rem;transform:translateY(20px);transition:transform .3s}
+.modal-overlay.open .auth-modal{transform:translateY(0)}
+.auth-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;margin-bottom:.4rem;text-align:center}
+.auth-sub{font-size:.8rem;color:var(--muted);text-align:center;margin-bottom:2rem;font-weight:300}
+.form-group{margin-bottom:1.2rem}
+.form-label{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);font-weight:500;display:block;margin-bottom:.5rem}
+.form-input{width:100%;border:1px solid var(--border);border-radius:2px;padding:.8rem 1rem;font-size:.85rem;outline:none;transition:border-color .2s;background:var(--smoke);color:var(--ink)}
+.form-input:focus{border-color:var(--gold);background:var(--white)}
+.auth-submit{width:100%;background:var(--ink);color:var(--white);border:none;padding:.9rem;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500;border-radius:2px;cursor:pointer;margin-top:1rem;transition:background .2s}
+.auth-submit:hover{background:var(--gold)}
+.auth-switch{text-align:center;margin-top:1.2rem;font-size:.8rem;color:var(--muted)}
+.auth-switch button{background:none;border:none;color:var(--gold);cursor:pointer;font-size:.8rem;font-weight:500}
+.auth-switch button:hover{text-decoration:underline}
+.auth-divider{display:flex;align-items:center;gap:1rem;margin:1.2rem 0}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.auth-divider span{font-size:.7rem;color:var(--muted);letter-spacing:.08em}
+.demo-login-btn{width:100%;background:none;border:1px solid var(--border);padding:.8rem;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-radius:2px;cursor:pointer;transition:all .2s}
+.demo-login-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* CHECKOUT PAGE */
+.checkout-grid{display:grid;grid-template-columns:1fr 420px;gap:3rem;align-items:start}
+.checkout-section{background:var(--white);border:1px solid var(--border);border-radius:2px;padding:2rem;margin-bottom:1.5rem}
+.checkout-section-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;margin-bottom:1.5rem;font-weight:400;display:flex;align-items:center;gap:.8rem}
+.checkout-section-title .step{background:var(--ink);color:var(--white);width:24px;height:24px;border-radius:50%;font-size:.7rem;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;font-weight:500;flex-shrink:0}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-grid .full{grid-column:1/-1}
+.order-summary{background:var(--smoke);border:1px solid var(--border);border-radius:2px;padding:1.5rem;position:sticky;top:100px}
+.order-item{display:flex;gap:1rem;padding:.8rem 0;border-bottom:1px solid var(--border);align-items:center}
+.order-item-img{width:60px;height:60px;background:var(--white);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;border:1px solid var(--border);flex-shrink:0}
+.order-item-info{flex:1}
+.order-item-name{font-size:.85rem;font-weight:500;margin-bottom:.2rem}
+.order-item-meta{font-size:.72rem;color:var(--muted)}
+.order-item-price{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600}
+.payment-icons{display:flex;gap:.5rem;margin-top:.8rem;flex-wrap:wrap}
+.payment-icon{background:var(--smoke);border:1px solid var(--border);border-radius:3px;padding:.3rem .6rem;font-size:.65rem;font-weight:600;letter-spacing:.05em;color:var(--muted)}
+.place-order-btn{width:100%;background:var(--gold);color:var(--white);border:none;padding:1.1rem;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500;border-radius:2px;cursor:pointer;margin-top:1.5rem;transition:background .2s}
+.place-order-btn:hover{background:var(--gold-dark)}
+
+/* SUCCESS */
+.success-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:4rem 2rem}
+.success-icon{font-size:5rem;margin-bottom:1.5rem;animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.1)}100%{transform:scale(1)}}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;margin-bottom:.8rem}
+.success-sub{font-size:.9rem;color:var(--muted);font-weight:300;line-height:1.8;max-width:400px}
+.success-order{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold);margin:1rem 0 2rem}
+
+/* FOOTER */
+footer{background:var(--ink);color:rgba(255,255,255,.6);padding:3rem 0 2rem}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-brand .logo{color:var(--white);margin-bottom:1rem;font-size:1.4rem}
+.footer-brand p{font-size:.8rem;line-height:1.8;font-weight:300;max-width:240px}
+.footer-col-title{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--white);font-weight:500;margin-bottom:1rem}
+.footer-link{display:block;font-size:.8rem;font-weight:300;margin-bottom:.6rem;cursor:pointer;transition:color .2s}
+.footer-link:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;font-size:.72rem}
+
+/* CATEGORIES */
+.categories-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+.cat-card{background:var(--white);border:1px solid var(--border);border-radius:2px;padding:2rem;text-align:center;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.cat-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--gold);transform:scaleX(0);transition:transform .25s}
+.cat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.cat-card:hover::before{transform:scaleX(1)}
+.cat-icon{font-size:2.5rem;margin-bottom:1rem}
+.cat-name{font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-bottom:.4rem}
+.cat-count{font-size:.72rem;color:var(--muted);letter-spacing:.08em}
+
+/* ABOUT */
+.about-section{background:var(--ink);color:var(--white);padding:5rem 0}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
+.about-eyebrow{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:1rem}
+.about-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,3.5vw,3rem);font-weight:300;line-height:1.2;margin-bottom:1.5rem}
+.about-text{font-size:.88rem;color:rgba(255,255,255,.65);line-height:1.9;font-weight:300;margin-bottom:1.5rem}
+.about-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem}
+.about-stat-num{font-family:'Cormorant Garamond',serif;font-size:2.5rem;color:var(--gold);font-weight:300}
+.about-stat-label{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:.2rem}
+.about-visual{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.about-vis-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:.8rem}
+.about-vis-icon{font-size:2rem}
+.about-vis-text{font-size:.78rem;color:rgba(255,255,255,.6);text-align:center;font-weight:300}
+
+/* USER DROPDOWN */
+.user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--white);border:1px solid var(--border);border-radius:4px;box-shadow:var(--shadow-lg);min-width:180px;z-index:100;padding:.5rem 0;opacity:0;pointer-events:none;transform:translateY(-4px);transition:all .2s}
+.user-dropdown.open{opacity:1;pointer-events:all;transform:translateY(0)}
+.dropdown-item{padding:.7rem 1.2rem;font-size:.8rem;cursor:pointer;transition:background .2s;display:flex;align-items:center;gap:.6rem;color:var(--ink)}
+.dropdown-item:hover{background:var(--smoke)}
+.dropdown-divider{height:1px;background:var(--border);margin:.3rem 0}
+.user-icon-wrapper{position:relative}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:600;cursor:pointer;border:2px solid transparent;transition:border-color .2s;letter-spacing:.05em}
+.user-avatar:hover{border-color:var(--gold)}
+
+@media(max-width:1024px){
+  .hero{grid-template-columns:1fr;height:auto;padding:3rem 0}
+  .hero-right{min-height:320px}
+  .checkout-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .categories-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .hero-left{padding:2rem 1.5rem}
+  .nav-links{display:none}
+  .about-grid{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .modal{grid-template-columns:1fr}
+  .modal-img{min-height:240px}
+  .cart-drawer{width:100%}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback}=React;
+
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const PRODUCTS=[
+  {id:1,name:"Merino Cloud Sweater",brand:"Atelier Nord",price:285,oldPrice:null,category:"Clothing",emoji:"🧥",rating:4.8,reviews:124,badge:"New",description:"Ultra-fine merino wool crafted in Portugal. Whisper-soft and naturally temperature-regulating.",sizes:["XS","S","M","L","XL"],colors:["#F5EDE0","#2C3E50","#8B7355"]},
+  {id:2,name:"Leather Tote Maison",brand:"Maison Craft",price:490,oldPrice:620,category:"Bags",emoji:"👜",rating:4.9,reviews:89,badge:"Sale",description:"Full-grain vegetable-tanned leather. Develops a beautiful patina over years of use.",sizes:["One Size"],colors:["#6B4226","#1C1C1C","#C4A882"]},
+  {id:3,name:"Sapphire Dusk Fragrance",brand:"Parfumerie",price:180,oldPrice:null,category:"Beauty",emoji:"🌸",rating:4.7,reviews:203,badge:null,description:"50ml Eau de Parfum. Notes of blue iris, sandalwood, and midnight musk.",sizes:["30ml","50ml","100ml"],colors:["#4A90D9","#9B59B6","#E8D5B7"]},
+  {id:4,name:"Micro Linen Trousers",brand:"Studio Blanc",price:195,oldPrice:null,category:"Clothing",emoji:"👗",rating:4.6,reviews:67,badge:null,description:"Relaxed-fit linen trousers. Breathable and effortlessly elegant for any season.",sizes:["XS","S","M","L","XL"],colors:["#F0EBE0","#C8A47A","#3D3D3D"]},
+  {id:5,name:"Titanium Desk Watch",brand:"Horlogerie",price:1240,oldPrice:1480,category:"Accessories",emoji:"⌚",rating:4.95,reviews:42,badge:"Sale",description:"Swiss automatic movement in a lightweight titanium case. Water-resistant to 100m.",sizes:["38mm","42mm"],colors:["#C0C0C0","#1C1C1C","#C9A86C"]},
+  {id:6,name:"Cashmere Sleep Set",brand:"Nuit Doux",price:320,oldPrice:null,category:"Clothing",emoji:"🌙",rating:4.8,reviews:91,badge:"New",description:"Grade A Mongolian cashmere. The ultimate in comfort for restful nights.",sizes:["XS/S","M/L","XL/XXL"],colors:["#E8D5D5","#B8C4C8","#D4C5B2"]},
+  {id:7,name:"Minimal Silk Scarf",brand:"Atelier Nord",price:145,oldPrice:null,category:"Accessories",emoji:"🧣",rating:4.7,reviews:156,badge:null,description:"100% mulberry silk, hand-rolled edges. 90cm × 90cm. Printed in Como, Italy.",sizes:["90×90cm"],colors:["#F5C842","#E74C3C","#2ECC71","#1C1C1C"]},
+  {id:8,name:"Cedar Shaving Kit",brand:"Gentleman",price:165,oldPrice:210,category:"Beauty",emoji:"🪒",rating:4.9,reviews:78,badge:"Sale",description:"Solid cedar handle safety razor with badger-hair brush and handmade soap.",sizes:["Standard"],colors:["#8B6914","#1C1C1C"]},
+  {id:9,name:"Woven Raffia Hat",brand:"Maison Craft",price:120,oldPrice:null,category:"Accessories",emoji:"👒",rating:4.5,reviews:44,badge:null,description:"Hand-woven by artisans in Madagascar. Natural raffia with a leather-trimmed brim.",sizes:["S/M","L/XL"],colors:["#D4A05A","#1C1C1C"]},
+  {id:10,name:"Geometric Gold Earrings",brand:"Bijou",price:235,oldPrice:null,category:"Accessories",emoji:"💛",rating:4.8,reviews:63,badge:"New",description:"18-karat gold-plated brass. Lightweight architectural hoops, 4cm diameter.",sizes:["One Size"],colors:["#C9A86C"]},
+  {id:11,name:"Structured Blazer",brand:"Studio Blanc",price:480,oldPrice:580,category:"Clothing",emoji:"🧳",rating:4.7,reviews:38,badge:"Sale",description:"Italian wool-blend. Relaxed but structured silhouette with horn buttons.",sizes:["XS","S","M","L","XL","XXL"],colors:["#2C2C2C","#C8C8C8","#8B6914"]},
+  {id:12,name:"Rose Ritual Body Oil",brand:"Parfumerie",price:95,oldPrice:null,category:"Beauty",emoji:"🌹",rating:4.6,reviews:192,badge:null,description:"Dry body oil with Bulgarian rose and jojoba. Absorbs instantly, no residue.",sizes:["100ml","200ml"],colors:["#E8B4B8","#F5DEB3"]},
+];
+
+const CATEGORIES=["All","Clothing","Bags","Accessories","Beauty"];
+
+// ─── TOAST ───────────────────────────────────────────────────────────────────
+function useToast(){
+  const show=useCallback((msg)=>{
+    const c=document.getElementById('toast-container');
+    const t=document.createElement('div');
+    t.className='toast';t.textContent=msg;
+    c.appendChild(t);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
+    setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400)},2400);
+  },[]);
+  return show;
+}
+
+// ─── NAV ─────────────────────────────────────────────────────────────────────
+function Nav({page,setPage,cartCount,openCart,user,onLogout,onOpenAuth}){
+  const [drop,setDrop]=useState(false);
+  const ref=useRef();
+  useEffect(()=>{
+    const h=(e)=>{if(ref.current&&!ref.current.contains(e.target))setDrop(false)};
+    document.addEventListener('mousedown',h);return()=>document.removeEventListener('mousedown',h);
+  },[]);
+  return(
+    <nav>
+      <div className="nav-inner">
+        <div className="logo" onClick={()=>setPage('home')} style={{cursor:'pointer'}}>LUXE<span>.</span></div>
+        <div className="nav-links">
+          {['home','shop','about'].map(p=>(
+            <span key={p} className={`nav-link${page===p?' active':''}`} onClick={()=>setPage(p)}>{p}</span>
+          ))}
+        </div>
+        <div className="nav-actions">
+          <button className="icon-btn" onClick={openCart} aria-label="Cart">
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            {cartCount>0&&<span className="cart-badge">{cartCount}</span>}
+          </button>
+          {user?(
+            <div className="user-icon-wrapper" ref={ref}>
+              <div className="user-avatar" onClick={()=>setDrop(d=>!d)}>{user.name.slice(0,2).toUpperCase()}</div>
+              <div className={`user-dropdown${drop?' open':''}`}>
+                <div className="dropdown-item" style={{fontWeight:500,color:'var(--gold)'}}>{user.name}</div>
+                <div className="dropdown-divider"/>
+                <div className="dropdown-item" onClick={()=>{setPage('shop');setDrop(false)}}>
+                  <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>My Orders
+                </div>
+                <div className="dropdown-divider"/>
+                <div className="dropdown-item" style={{color:'var(--red)'}} onClick={()=>{onLogout();setDrop(false)}}>
+                  <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out
+                </div>
+              </div>
+            </div>
+          ):(
+            <button className="user-btn" onClick={onOpenAuth}>Sign In</button>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+// ─── HOME PAGE ────────────────────────────────────────────────────────────────
+function HomePage({setPage,addToCart}){
+  const featured=PRODUCTS.slice(0,4);
+  return(
+    <div>
+      {/* Hero */}
+      <section className="hero">
+        <div className="hero-left">
+          <p className="hero-eyebrow">New Collection · Spring 2025</p>
+          <h1 className="hero-title">Dressed in<br/><em>refined</em><br/>simplicity</h1>
+          <p className="hero-sub">Curated pieces for the discerning wardrobe. Sustainable materials, enduring style, and craftsmanship that speaks without words.</p>
+          <div className="hero-actions">
+            <button className="btn-primary" onClick={()=>setPage('shop')}>Explore Collection</button>
+            <button className="btn-ghost" onClick={()=>setPage('about')}>Our Story</button>
+          </div>
+        </div>
+        <div className="hero-right">
+          <div className="hero-img-wrapper">
+            <div className="hero-img-bg"/>
+            <div className="hero-product-display">🧥</div>
+            <div className="hero-tag">
+              <div className="hero-tag-label">Starting from</div>
+              <div className="hero-tag-price">$95</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Marquee */}
+      <div className="marquee-bar">
+        <div className="marquee-track">
+          {[...Array(2)].map((_,i)=>['Free shipping over $200','New arrivals weekly','Sustainable materials','Artisan crafted','30-day returns','Complimentary gift wrap'].map((t,j)=>(
+            <span key={`${i}-${j}`} className="marquee-item">{t}</span>
+          )))}
+        </div>
+      </div>
+
+      {/* Categories */}
+      <section className="section" style={{background:'var(--white)'}}>
+        <div className="container">
+          <div className="section-header">
+            <p className="section-eyebrow">Discover</p>
+            <h2 className="section-title">Shop by Category</h2>
+            <p className="section-sub">From timeless wardrobe essentials to artisanal accessories</p>
+          </div>
+          <div className="categories-grid">
+            {[{icon:'🧥',name:'Clothing',count:5},{icon:'👜',name:'Bags',count:1},{icon:'💛',name:'Accessories',count:4},{icon:'🌸',name:'Beauty',count:3}].map(c=>(
+              <div key={c.name} className="cat-card" onClick={()=>setPage('shop')}>
+                <div className="cat-icon">{c.icon}</div>
+                <div className="cat-name">{c.name}</div>
+                <div className="cat-count">{c.count} Items</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured */}
+      <section className="section">
+        <div className="container">
+          <div className="section-header">
+            <p className="section-eyebrow">Handpicked</p>
+            <h2 className="section-title">Featured Pieces</h2>
+          </div>
+          <div className="products-grid">
+            {featured.map(p=><ProductCard key={p.id} product={p} addToCart={addToCart}/>)}
+          </div>
+          <div style={{textAlign:'center',marginTop:'3rem'}}>
+            <button className="btn-ghost" onClick={()=>setPage('shop')}>View All Products</button>
+          </div>
+        </div>
+      </section>
+
+      {/* About strip */}
+      <AboutSection/>
+
+      {/* Footer */}
+      <Footer setPage={setPage}/>
+    </div>
+  );
+}
+
+// ─── PRODUCT CARD ─────────────────────────────────────────────────────────────
+function ProductCard({product,addToCart}){
+  const [wished,setWished]=useState(false);
+  const [modal,setModal]=useState(false);
+  const toast=useToast();
+  return(
+    <>
+    <div className="product-card">
+      <div className="product-img" onClick={()=>setModal(true)}>
+        {product.badge&&<span className={`product-badge${product.badge==='Sale'?' sale':product.badge==='New'?' new':''}`}>{product.badge}</span>}
+        <button className={`wishlist-btn${wished?' active':''}`} onClick={e=>{e.stopPropagation();setWished(w=>!w);toast(wished?'Removed from wishlist':'Added to wishlist ♥')}} aria-label="Wishlist">♥</button>
+        <span style={{fontSize:'5rem',position:'relative',zIndex:1}}>{product.emoji}</span>
+      </div>
+      <div className="product-info" onClick={()=>setModal(true)}>
+        <div className="product-brand">{product.brand}</div>
+        <div className="product-name">{product.name}</div>
+        <div className="product-desc">{product.description.slice(0,60)}…</div>
+        <div className="product-footer">
+          <div>
+            <span className="product-price">${product.price}</span>
+            {product.oldPrice&&<span className="product-price-old">${product.oldPrice}</span>}
+            <div className="product-rating">
+              <span className="stars">{'★'.repeat(Math.floor(product.rating))}</span>
+              <span>{product.rating} ({product.reviews})</span>
+            </div>
+          </div>
+          <button className="add-to-cart-btn" onClick={e=>{e.stopPropagation();addToCart(product,1,product.sizes[0],product.colors[0]);toast(`Added to cart`)}}>+ Add</button>
+        </div>
+      </div>
+    </div>
+    {modal&&<ProductModal product={product} addToCart={addToCart} onClose={()=>setModal(false)}/>}
+    </>
+  );
+}
+
+// ─── PRODUCT MODAL ────────────────────────────────────────────────────────────
+function ProductModal({product,addToCart,onClose}){
+  const [size,setSize]=useState(product.sizes[0]);
+  const [color,setColor]=useState(product.colors[0]);
+  const [qty,setQty]=useState(1);
+  const toast=useToast();
+  useEffect(()=>{document.body.style.overflow='hidden';return()=>document.body.style.overflow='';},[]);
+  return(
+    <div className="modal-overlay open" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal">
+        <div className="modal-img">
+          <span>{product.emoji}</span>
+        </div>
+        <div className="modal-body">
+          <button className="modal-close" onClick={onClose}>✕</button>
+          <div className="modal-brand">{product.brand}</div>
+          <h2 className="modal-name">{product.name}</h2>
+          <div className="modal-price-row">
+            <span className="modal-price">${product.price}</span>
+            {product.oldPrice&&<span style={{fontSize:'1rem',color:'var(--muted)',textDecoration:'line-through'}}>${product.oldPrice}</span>}
+            {product.badge==='Sale'&&<span style={{background:'#C0392B',color:'#fff',fontSize:'.65rem',padding:'.2rem .6rem',borderRadius:'2px',letterSpacing:'.1em',fontWeight:500}}>SALE</span>}
+          </div>
+          <p className="modal-desc">{product.description}</p>
+          <div className="modal-section">
+            <div className="modal-section-label">Size — <span style={{color:'var(--gold)',fontWeight:400}}>{size}</span></div>
+            <div className="size-options">{product.sizes.map(s=><button key={s} className={`size-btn${size===s?' active':''}`} onClick={()=>setSize(s)}>{s}</button>)}</div>
+          </div>
+          <div className="modal-section">
+            <div className="modal-section-label">Color</div>
+            <div className="color-options">{product.colors.map(c=><button key={c} className={`color-btn${color===c?' active':''}`} style={{background:c,border:`2px solid ${color===c?'var(--ink)':'var(--border)'}`}} onClick={()=>setColor(c)} aria-label={c}/>)}</div>
+          </div>
+          <div className="qty-row">
+            <div className="qty-control">
+              <button className="qty-btn" onClick={()=>setQty(q=>Math.max(1,q-1))}>−</button>
+              <span className="qty-num">{qty}</span>
+              <button className="qty-btn" onClick={()=>setQty(q=>q+1)}>+</button>
+            </div>
+            <span style={{fontSize:'.8rem',color:'var(--muted)'}}>In stock</span>
+          </div>
+          <button className="modal-add-btn" onClick={()=>{addToCart(product,qty,size,color);toast(`${product.name} added to cart`);onClose()}}>Add to Cart — ${(product.price*qty).toLocaleString()}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── SHOP PAGE ────────────────────────────────────────────────────────────────
+function ShopPage({addToCart}){
+  const [cat,setCat]=useState('All');
+  const [sort,setSort]=useState('featured');
+  const [q,setQ]=useState('');
+  const filtered=PRODUCTS.filter(p=>(cat==='All'||p.category===cat)&&(p.name.toLowerCase().includes(q.toLowerCase())||p.brand.toLowerCase().includes(q.toLowerCase())));
+  const sorted=[...filtered].sort((a,b)=>{
+    if(sort==='price-asc')return a.price-b.price;
+    if(sort==='price-desc')return b.price-a.price;
+    if(sort==='rating')return b.rating-a.rating;
+    return 0;
+  });
+  return(
+    <div className="page">
+      <div className="container" style={{padding:'3rem 2rem'}}>
+        <div className="section-header" style={{textAlign:'left',marginBottom:'2rem'}}>
+          <p className="section-eyebrow">Collection</p>
+          <h1 className="section-title">The Edit</h1>
+          <p className="section-sub">{sorted.length} pieces curated for you</p>
+        </div>
+        <div className="filters-bar">
+          <div className="filter-group">
+            {CATEGORIES.map(c=><button key={c} className={`filter-btn${cat===c?' active':''}`} onClick={()=>setCat(c)}>{c}</button>)}
+          </div>
+          <div className="search-bar">
+            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input placeholder="Search…" value={q} onChange={e=>setQ(e.target.value)}/>
+          </div>
+          <select className="sort-select" value={sort} onChange={e=>setSort(e.target.value)}>
+            <option value="featured">Featured</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="rating">Top Rated</option>
+          </select>
+        </div>
+        {sorted.length===0?(
+          <div style={{textAlign:'center',padding:'4rem',color:'var(--muted)'}}>
+            <div style={{fontSize:'3rem',marginBottom:'1rem'}}>🔍</div>
+            <p>No products found. Try a different search.</p>
+          </div>
+        ):(
+          <div className="products-grid">
+            {sorted.map(p=><ProductCard key={p.id} product={p} addToCart={addToCart}/>)}
+          </div>
+        )}
+      </div>
+      <Footer setPage={()=>{}}/>
+    </div>
+  );
+}
+
+// ─── ABOUT SECTION ────────────────────────────────────────────────────────────
+function AboutSection(){
+  return(
+    <section className="about-section">
+      <div className="container">
+        <div className="about-grid">
+          <div>
+            <p className="about-eyebrow">Our Philosophy</p>
+            <h2 className="about-title">Less, but<br/>infinitely better</h2>
+            <p className="about-text">We believe in the power of restraint. Every piece in our collection has been selected for its exceptional quality, enduring design, and the story of its maker. We partner only with artisans who share our commitment to sustainability and fair practices.</p>
+            <p className="about-text">From the merino highland farms of Patagonia to the silk looms of Como, each item carries the fingerprint of human craftsmanship at its finest.</p>
+            <div className="about-stats">
+              {[{n:'120+',l:'Artisan Partners'},{n:'8',l:'Countries'},{n:'2019',l:'Founded'}].map(s=>(
+                <div key={s.l}>
+                  <div className="about-stat-num">{s.n}</div>
+                  <div className="about-stat-label">{s.l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="about-visual">
+            {[{icon:'♻️',text:'100% sustainable packaging'},{icon:'🌿',text:'Natural & organic materials'},{icon:'🤝',text:'Fair trade certified'},{icon:'🚚',text:'Carbon-neutral delivery'}].map(v=>(
+              <div key={v.text} className="about-vis-card">
+                <div className="about-vis-icon">{v.icon}</div>
+                <div className="about-vis-text">{v.text}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── FOOTER ──────────────────────────────────────────────────────────────────
+function Footer({setPage}){
+  return(
+    <footer>
+      <div className="container">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            <div className="logo">LUXE<span style={{color:'var(--gold)'}}>.</span></div>
+            <p>Curated luxury goods for the modern minimalist. Sustainable, artisan, enduring.</p>
+          </div>
+          {[{title:'Shop',links:['New Arrivals','Clothing','Bags','Accessories','Beauty']},{title:'Info',links:['Our Story','Sustainability','Press','Careers']},{title:'Help',links:['Shipping','Returns','Size Guide','Contact']}].map(col=>(
+            <div key={col.title}>
+              <div className="footer-col-title">{col.title}</div>
+              {col.links.map(l=><span key={l} className="footer-link">{l}</span>)}
+            </div>
+          ))}
+        </div>
+        <div className="footer-bottom">
+          <span>© 2025 LUXE. All rights reserved.</span>
+          <div style={{display:'flex',gap:'1.5rem'}}>
+            {['Privacy','Terms','Cookies'].map(l=><span key={l} style={{cursor:'pointer',transition:'color .2s'}}>{l}</span>)}
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// ─── CART DRAWER ─────────────────────────────────────────────────────────────
+function CartDrawer({open,onClose,cart,updateQty,removeItem,onCheckout}){
+  const subtotal=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const shipping=subtotal>200?0:12;
+  return(
+    <>
+    <div className={`cart-overlay${open?' open':''}`} onClick={onClose}/>
+    <div className={`cart-drawer${open?' open':''}`}>
+      <div className="cart-header">
+        <div>
+          <div className="cart-title">Your Cart</div>
+          <div className="cart-count">{cart.reduce((s,i)=>s+i.qty,0)} items</div>
+        </div>
+        <button className="icon-btn" onClick={onClose}>✕</button>
+      </div>
+      <div className="cart-items">
+        {cart.length===0?(
+          <div className="cart-empty">
+            <div className="cart-empty-icon">🛍️</div>
+            <p>Your cart is empty.<br/>Discover our collection.</p>
+          </div>
+        ):cart.map(item=>(
+          <div key={`${item.id}-${item.size}-${item.color}`} className="cart-item">
+            <div className="cart-item-img">{item.emoji}</div>
+            <div>
+              <div className="cart-item-name">{item.name}</div>
+              <div className="cart-item-meta">{item.size} · {item.brand}</div>
+              <div className="cart-item-qty">
+                <button className="cart-qty-btn" onClick={()=>updateQty(item,item.qty-1)}>−</button>
+                <span className="cart-qty-num">{item.qty}</span>
+                <button className="cart-qty-btn" onClick={()=>updateQty(item,item.qty+1)}>+</button>
+              </div>
+              <button className="cart-remove" onClick={()=>removeItem(item)}>Remove</button>
+            </div>
+            <div className="cart-item-price">${(item.price*item.qty).toLocaleString()}</div>
+          </div>
+        ))}
+      </div>
+      {cart.length>0&&(
+        <div className="cart-footer">
+          <div className="cart-totals">
+            <div className="cart-total-row"><span>Subtotal</span><span>${subtotal.toLocaleString()}</span></div>
+            <div className="cart-total-row"><span>Shipping</span><span>{shipping===0?'Free':`$${shipping}`}</span></div>
+            {shipping>0&&<div style={{fontSize:'.7rem',color:'var(--gold)',marginTop:'.3rem'}}>Free shipping on orders over $200</div>}
+            <div className="cart-total-row grand"><span>Total</span><span>${(subtotal+shipping).toLocaleString()}</span></div>
+          </div>
+          <button className="checkout-btn" onClick={()=>{onClose();onCheckout()}}>Proceed to Checkout</button>
+        </div>
+      )}
+    </div>
+    </>
+  );
+}
+
+// ─── AUTH MODAL ──────────────────────────────────────────────────────────────
+function AuthModal({open,onClose,onLogin}){
+  const [isLogin,setIsLogin]=useState(true);
+  const [form,setForm]=useState({name:'',email:'',password:''});
+  const toast=useToast();
+  const submit=()=>{
+    if(!form.email||!form.password){toast('Please fill all fields');return;}
+    const name=isLogin?(form.email.split('@')[0]):form.name||form.email.split('@')[0];
+    onLogin({name,email:form.email});
+    toast(`Welcome back, ${name}!`);
+    onClose();
+  };
+  if(!open)return null;
+  return(
+    <div className="modal-overlay open" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="auth-modal">
+        <button className="modal-close" style={{position:'absolute',top:'1rem',right:'1rem'}} onClick={onClose}>✕</button>
+        <h2 className="auth-title">{isLogin?'Welcome Back':'Create Account'}</h2>
+        <p className="auth-sub">{isLogin?'Sign in to your LUXE account':'Join our community of discerning shoppers'}</p>
+        {!isLogin&&(
+          <div className="form-group">
+            <label className="form-label">Full Name</label>
+            <input className="form-input" placeholder="Your name" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))}/>
+          </div>
+        )}
+        <div className="form-group">
+          <label className="form-label">Email</label>
+          <input className="form-input" type="email" placeholder="your@email.com" value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))}/>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Password</label>
+          <input className="form-input" type="password" placeholder="••••••••" value={form.password} onChange={e=>setForm(f=>({...f,password:e.target.value}))}/>
+        </div>
+        <button className="auth-submit" onClick={submit}>{isLogin?'Sign In':'Create Account'}</button>
+        <div className="auth-divider"><span>or</span></div>
+        <button className="demo-login-btn" onClick={()=>{onLogin({name:'Demo User',email:'demo@luxe.com'});toast('Signed in as Demo User');onClose();}}>Continue as Demo</button>
+        <div className="auth-switch">
+          {isLogin?'New to LUXE? ':' Already have an account? '}
+          <button onClick={()=>setIsLogin(l=>!l)}>{isLogin?'Create account':'Sign in'}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── CHECKOUT PAGE ───────────────────────────────────────────────────────────
+function CheckoutPage({cart,user,onSuccess}){
+  const [form,setForm]=useState({first:'',last:'',email:user?.email||'',addr:'',city:'',zip:'',country:'US',card:'',expiry:'',cvv:''});
+  const [loading,setLoading]=useState(false);
+  const toast=useToast();
+  const subtotal=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const shipping=subtotal>200?0:12;
+  const set=(k)=>(e)=>setForm(f=>({...f,[k]:e.target.value}));
+  const submit=()=>{
+    const req=['first','last','email','addr','city','zip','card','expiry','cvv'];
+    if(req.some(k=>!form[k])){toast('Please complete all required fields');return;}
+    setLoading(true);
+    setTimeout(()=>{setLoading(false);onSuccess();},2000);
+  };
+  const fmtCard=(v)=>v.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim().slice(0,19);
+  const fmtExp=(v)=>v.replace(/\D/g,'').replace(/^(\d{2})(\d)/,'$1/$2').slice(0,5);
+  return(
+    <div className="page">
+      <div className="container" style={{padding:'3rem 2rem'}}>
+        <div style={{marginBottom:'2rem'}}>
+          <p className="section-eyebrow">Secure Checkout</p>
+          <h1 className="section-title">Complete Your Order</h1>
+        </div>
+        <div className="checkout-grid">
+          <div>
+            <div className="checkout-section">
+              <h3 className="checkout-section-title"><span className="step">1</span>Contact Information</h3>
+              <div className="form-grid">
+                <div className="form-group"><label className="form-label">First Name *</label><input className="form-input" value={form.first} onChange={set('first')} placeholder="John"/></div>
+                <div className="form-group"><label className="form-label">Last Name *</label><input className="form-input" value={form.last} onChange={set('last')} placeholder="Doe"/></div>
+                <div className="form-group full"><label className="form-label">Email Address *</label><input className="form-input" type="email" value={form.email} onChange={set('email')} placeholder="john@email.com"/></div>
+              </div>
+            </div>
+            <div className="checkout-section">
+              <h3 className="checkout-section-title"><span className="step">2</span>Shipping Address</h3>
+              <div className="form-grid">
+                <div className="form-group full"><label className="form-label">Street Address *</label><input className="form-input" value={form.addr} onChange={set('addr')} placeholder="123 Main Street"/></div>
+                <div className="form-group"><label className="form-label">City *</label><input className="form-input" value={form.city} onChange={set('city')} placeholder="New York"/></div>
+                <div className="form-group"><label className="form-label">ZIP Code *</label><input className="form-input" value={form.zip} onChange={set('zip')} placeholder="10001"/></div>
+                <div className="form-group"><label className="form-label">Country</label><select className="form-input" value={form.country} onChange={set('country')}><option value="US">United States</option><option value="GB">United Kingdom</option><option value="CA">Canada</option><option value="AU">Australia</option><option value="IN">India</option></select></div>
+              </div>
+            </div>
+            <div className="checkout-section">
+              <h3 className="checkout-section-title"><span className="step">3</span>Payment Details</h3>
+              <div style={{background:'rgba(201,168,108,.1)',border:'1px solid rgba(201,168,108,.3)',borderRadius:'4px',padding:'.8rem 1rem',fontSize:'.78rem',color:'var(--gold-dark)',marginBottom:'1.2rem',display:'flex',alignItems:'center',gap:'.5rem'}}>
+                🔒 Your payment is secured with 256-bit SSL encryption
+              </div>
+              <div className="form-grid">
+                <div className="form-group full"><label className="form-label">Card Number *</label><input className="form-input" value={form.card} onChange={e=>setForm(f=>({...f,card:fmtCard(e.target.value)}))} placeholder="4242 4242 4242 4242" maxLength={19}/></div>
+                <div className="form-group"><label className="form-label">Expiry *</label><input className="form-input" value={form.expiry} onChange={e=>setForm(f=>({...f,expiry:fmtExp(e.target.value)}))} placeholder="MM/YY" maxLength={5}/></div>
+                <div className="form-group"><label className="form-label">CVV *</label><input className="form-input" value={form.cvv} onChange={set('cvv')} placeholder="123" maxLength={4} type="password"/></div>
+              </div>
+              <div className="payment-icons">
+                {['VISA','MC','AMEX','DISC'].map(p=><span key={p} className="payment-icon">{p}</span>)}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div className="order-summary">
+              <h3 style={{fontFamily:'Cormorant Garamond,serif',fontSize:'1.3rem',fontWeight:400,marginBottom:'1rem'}}>Order Summary</h3>
+              {cart.map(item=>(
+                <div key={`${item.id}-${item.size}`} className="order-item">
+                  <div className="order-item-img">{item.emoji}</div>
+                  <div className="order-item-info">
+                    <div className="order-item-name">{item.name}</div>
+                    <div className="order-item-meta">Size: {item.size} · Qty: {item.qty}</div>
+                  </div>
+                  <div className="order-item-price">${(item.price*item.qty).toLocaleString()}</div>
+                </div>
+              ))}
+              <div style={{marginTop:'1.2rem',paddingTop:'1rem',borderTop:'1px solid var(--border)'}}>
+                <div className="cart-total-row"><span>Subtotal</span><span>${subtotal.toLocaleString()}</span></div>
+                <div className="cart-total-row"><span>Shipping</span><span>{shipping===0?'Free':`$${shipping}`}</span></div>
+                <div className="cart-total-row"><span>Tax (8%)</span><span>${Math.round(subtotal*.08).toLocaleString()}</span></div>
+                <div className="cart-total-row grand"><span>Total</span><span>${(subtotal+shipping+Math.round(subtotal*.08)).toLocaleString()}</span></div>
+              </div>
+              <button className="place-order-btn" onClick={submit} disabled={loading} style={{opacity:loading?.7:1}}>
+                {loading?'Processing…':'Place Order →'}
+              </button>
+              <p style={{fontSize:'.7rem',color:'var(--muted)',textAlign:'center',marginTop:.8+'rem',lineHeight:1.6}}>By placing your order you agree to our Terms of Service and Privacy Policy</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── SUCCESS PAGE ─────────────────────────────────────────────────────────────
+function SuccessPage({setPage}){
+  const num=`LUXE-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
+  return(
+    <div className="page">
+      <div className="success-page">
+        <div className="success-icon">✅</div>
+        <h1 className="success-title">Order Confirmed</h1>
+        <p className="success-sub">Thank you for your purchase. Your order has been placed and is being carefully prepared by our team.</p>
+        <div className="success-order">Order #{num}</div>
+        <div style={{display:'flex',gap:'1rem',flexWrap:'wrap',justifyContent:'center'}}>
+          <button className="btn-primary" onClick={()=>setPage('shop')}>Continue Shopping</button>
+          <button className="btn-ghost" onClick={()=>setPage('home')}>Back to Home</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── ABOUT PAGE ──────────────────────────────────────────────────────────────
+function AboutPage({setPage}){
+  return(
+    <div className="page">
+      <section style={{padding:'5rem 0',textAlign:'center',background:'var(--white)'}}>
+        <div className="container">
+          <p className="section-eyebrow">Est. 2019</p>
+          <h1 style={{fontFamily:'Cormorant Garamond,serif',fontSize:'clamp(3rem,6vw,6rem)',fontWeight:300,lineHeight:1.1}}>The LUXE Story</h1>
+        </div>
+      </section>
+      <AboutSection/>
+      <section className="section">
+        <div className="container">
+          <div className="section-header">
+            <p className="section-eyebrow">Explore</p>
+            <h2 className="section-title">Our Collection</h2>
+          </div>
+          <div style={{textAlign:'center'}}>
+            <button className="btn-primary" onClick={()=>setPage('shop')}>Shop Now</button>
+          </div>
+        </div>
+      </section>
+      <Footer setPage={setPage}/>
+    </div>
+  );
+}
+
+// ─── APP ──────────────────────────────────────────────────────────────────────
+function App(){
+  const [page,setPage]=useState('home');
+  const [cart,setCart]=useState([]);
+  const [cartOpen,setCartOpen]=useState(false);
+  const [authOpen,setAuthOpen]=useState(false);
+  const [user,setUser]=useState(null);
+  const toast=useToast();
+
+  const addToCart=(product,qty,size,color)=>{
+    setCart(c=>{
+      const key=`${product.id}-${size}-${color}`;
+      const exists=c.find(i=>`${i.id}-${i.size}-${i.color}`===key);
+      if(exists)return c.map(i=>`${i.id}-${i.size}-${i.color}`===key?{...i,qty:i.qty+qty}:i);
+      return[...c,{...product,qty,size,color}];
+    });
+  };
+  const updateQty=(item,qty)=>{
+    if(qty<1){removeItem(item);return;}
+    setCart(c=>c.map(i=>`${i.id}-${i.size}-${i.color}`===`${item.id}-${item.size}-${item.color}`?{...i,qty}:i));
+  };
+  const removeItem=(item)=>{
+    setCart(c=>c.filter(i=>`${i.id}-${i.size}-${i.color}`!==`${item.id}-${item.size}-${item.color}`));
+    toast('Item removed');
+  };
+  const goCheckout=()=>{
+    if(!user){setAuthOpen(true);toast('Please sign in to checkout');return;}
+    setPage('checkout');
+  };
+
+  return(
+    <div className="app">
+      <Nav page={page} setPage={setPage} cartCount={cart.reduce((s,i)=>s+i.qty,0)} openCart={()=>setCartOpen(true)} user={user} onLogout={()=>{setUser(null);toast('Signed out successfully')}} onOpenAuth={()=>setAuthOpen(true)}/>
+      {page==='home'&&<HomePage setPage={setPage} addToCart={addToCart}/>}
+      {page==='shop'&&<ShopPage addToCart={addToCart}/>}
+      {page==='about'&&<AboutPage setPage={setPage}/>}
+      {page==='checkout'&&cart.length>0&&<CheckoutPage cart={cart} user={user} onSuccess={()=>{setCart([]);setPage('success')}}/>}
+      {page==='success'&&<SuccessPage setPage={setPage}/>}
+      <CartDrawer open={cartOpen} onClose={()=>setCartOpen(false)} cart={cart} updateQty={updateQty} removeItem={removeItem} onCheckout={goCheckout}/>
+      <AuthModal open={authOpen} onClose={()=>setAuthOpen(false)} onLogin={u=>{setUser(u)}}/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+<div id="toast-container"></div>
+</body>
+</html>
